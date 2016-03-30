@@ -7,7 +7,7 @@ struct bstNode{
 };
 
 void insertBstNode(int value, bstNode *leaf); 
-void searchBstNode(int value);
+bstNode *searchBstNode(int value, bstNode *leaf);
 void addBst();
 void deleteBstNode();
 void destroyBst(bstNode *leaf);

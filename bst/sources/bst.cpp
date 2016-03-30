@@ -12,7 +12,13 @@ void insertBstNode(int value, bstNode *leaf){
 	}
 }
  
-
+bstNode *searchBstNode(int value, bstNode *leaf){
+	if(leaf != NULL) {
+    	if(value == leaf->value) return leaf;
+		if(value < leaf->value) return search(value, leaf->left);
+    	else return search(value, leaf->right);
+  	} else return NULL;
+}
 
 void destroyBst(bstNode *leaf){
 	if(leaf != NULL){
