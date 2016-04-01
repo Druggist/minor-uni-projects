@@ -1,11 +1,16 @@
 #include "../headers/data.h"  
 
-unsigned const int elements = 1000; //change number of elements
-unsigned int size  = (elements * 11) / 10;
+int elements, size;
 int *data;
+
 random_device rd;
 mt19937 mt(rd());
-uniform_int_distribution<int> dist(0, 10000); //set random range
+uniform_int_distribution<int> dist(-10000000, 10000000); //set random range
+
+void setSize(int s){
+	elements = s;
+	size = (elements / 10) * 11;
+}
 
 void generateData(){
 	if(elements >= 10){
@@ -13,23 +18,12 @@ void generateData(){
 		data = new int[size];
 		for(int i = 0; i < size; i++){
 			data[i] = dist(mt);
-			if(i < elements){
-				for(int j = 0; j < i; j++){
-					if(data[i] == data[j]){
-						i--;
-						break;
-					}
+			/*for(int j = 0; j < i; j++) {
+				if(data[i] == data[j]){
+					i--;
+					break;
 				}
-			}else{
-				if(i != elements){
-					for(int j = elements; j < i; j++){
-						if(data[i] == data[j]){
-							i--;
-							break;
-						}
-					}
-				}
-			}
+			}*/
 		}
 	}
 }
@@ -48,5 +42,5 @@ void sortData(){
 }
 
 void destroyData(){
-	if(data != NULL) delete[] data;
+	delete[] data;
 }
