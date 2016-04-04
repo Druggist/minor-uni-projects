@@ -1,4 +1,5 @@
 #include "../headers/bst.h" 
+#include "../headers/data.h" 
 
 bstNode *insertBstNode(int value, bstNode *root){
 	if(root != NULL){
@@ -9,6 +10,31 @@ bstNode *insertBstNode(int value, bstNode *root){
 		root->value = value;
 		root->left = NULL;
 		root->right = NULL;
+	}
+	return root;
+}
+
+bstNode *insertAvlNode(int a, int b, bstNode *root){
+	if (a<b)
+	{
+		int c = ((b - a) / 2) + a;
+		root = new bstNode;
+		root->value = data[c];
+		if(c!=a)
+			root->left = insertAvlNode(a,c-1,root->left);
+		else
+			root->left = NULL;
+		if(c!=b)
+			root->right = insertAvlNode(c+1,b,root->right);
+		else
+			root->right = NULL;
+	}
+	if(a==b)
+	{
+		root = new bstNode;
+		root->value = data[a];
+		root->left = NULL;
+		root->right = NULL;	
 	}
 	return root;
 }
@@ -51,11 +77,11 @@ bstNode *getRightMinNode(bstNode *root){
 	return root;
 }
  
-void inOrder(bstNode *root){
-  	if(root == NULL) return;
-  	inOrder(root->left);
-  	cout << root->value << " ";
-  	inOrder(root->right);
+int inOrder(bstNode *root, int i){
+  	if(root == NULL) { i++; return i;}
+  	i= inOrder(root->left, i);
+  	data[i] = root->value;
+  	inOrder(root->right, i);
 }
 
 void preOrder(bstNode *root){
@@ -67,9 +93,9 @@ void preOrder(bstNode *root){
 
 void postOrder(bstNode *root){
 	if(root == NULL) return;
-	preOrder(root->left);
-	preOrder(root->right);
-  	cout << root->value << " ";
+	postOrder(root->left);
+	postOrder(root->right);
+  	delete root;
 }
 
 int height(bstNode *root){

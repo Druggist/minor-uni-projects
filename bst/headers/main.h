@@ -2,10 +2,13 @@
 #include <sstream>
 #include <random>
 #include <ctime>
+#include <string>
 
 using namespace std;
 
 void fillBst();
+void fillAvl();
+void balanceAvl();
 void fillBstList();
 void insertBst();
 void searchBst();
