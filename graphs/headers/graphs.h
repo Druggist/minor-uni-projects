@@ -8,8 +8,13 @@ class Graph{
 		short int ** graphMatrix;
 		int nodesCount;
 		int arcsCount;
+		void fillAM(int nodesCount);
+		void fillEL(int arcsCount);
+		void fillASSCL(int nodesCount);
+		void fillAACL(int nodesCount);
+		void fillAPL(int nodesCount);
+		void fillGM(int nodesCount);
 	public:
-		Graph(int nodesCount, arcsCount); //filling matrix
+		Graph(int nodesCount, int arcsCount); //filling matrix
 		~Graph();
-
-}
+};
