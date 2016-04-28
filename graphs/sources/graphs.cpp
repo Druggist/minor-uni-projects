@@ -1,6 +1,8 @@
 #include "../headers/graphs.h"
 
 Graph::Graph(int nodesCount, int arcsCount){
+	this->nodesCount = nodesCount;
+	this->nodesCount = nodesCount;
 	fillAM(nodesCount);
 	fillEL(arcsCount);
 	fillASSCL(nodesCount);
