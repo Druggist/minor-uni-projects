@@ -1,20 +1,30 @@
+#include <vector>
+#include <random>
+#include <algorithm> 
+#include <iostream>
+
+using namespace std;
+
 class Graph{
 	private:
-		bool **adjacencyMatrix;
-		short int **edgeList;
-		short int **adjacencySSList; //subsequent 
-		short int **adjacencyACList; //antecendent
-		short int **adjacencyPList; //passive
-		short int ** graphMatrix;
+		random_device rd;
+
+		vector<vector<bool>> adjacencyMatrix;
+		vector<vector<unsigned int>> edgeList;
+		vector<vector<unsigned int>> adjacencySSList; //subsequent 
+		vector<vector<long int>> adjacencyACList; //antecendent
+		vector<vector<unsigned int>> adjacencyPList; //passive
+		vector<vector<long int>> graphMatrix;
 		int nodesCount;
 		int arcsCount;
-		void fillAM(int nodesCount);
-		void fillEL(int arcsCount);
-		void fillASSCL(int nodesCount);
-		void fillAACL(int nodesCount);
-		void fillAPL(int nodesCount);
-		void fillGM(int nodesCount);
+		bool debug;
+
+		void fillAM();
+		bool fillEL();
+		bool fillASSCL();
+		bool fillAACL();
+		bool fillAPL();
+		bool fillGM();
 	public:
-		Graph(int nodesCount, int arcsCount); //filling matrix
-		~Graph();
+		Graph(unsigned int nodesCount); //filling matrix
 };
