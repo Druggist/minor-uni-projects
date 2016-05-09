@@ -29,20 +29,27 @@ void Graph::fillAM(){
 					break;
 				} 
 			}
+
 			if(!isEqual) for(long int j = i - 1; j >= 0; j--){
-				if(arcs[j + 1] < arcs[j]) swap(arcs[j], arcs[j + 1]);  
-				else break;
+				if(arcs[j + 1] < arcs[j]) {
+					unsigned int temp = arcs[j + 1];
+					arcs[j + 1] = arcs[j];
+					arcs[j] = temp;
+				} else break;
 			}
 		}
 	}
 
+	int pos = -1;
 	for(unsigned int i = 0; i < nodesCount; i++){
-		for(unsigned int j = i + 1; j < nodesCount; j++){
+		for(unsigned int j = 0; j < nodesCount; j++){
 			if(!arcs.empty()){
-				int pos = (i > 0)?(j + i):(j - 1);
-				if(pos == arcs[0]){
-					adjacencyMatrix[i][j] = true;
-					arcs.erase(arcs.begin());
+				if(j > i){
+					pos++;
+					if(pos == arcs[0]){
+						adjacencyMatrix[i][j] = true;
+						arcs.erase(arcs.begin());
+					}
 				}
 			}
 		}
@@ -59,6 +66,7 @@ void Graph::fillAM(){
 
 bool Graph::fillEL(){
 	if(adjacencyMatrix.empty()) return false;
+	cout << arcsCount;
 	edgeList.resize(arcsCount, vector<unsigned int>(2, 0));
 	int arc = 0;
 	for(unsigned int i = 0; i < nodesCount; i++){
@@ -73,7 +81,7 @@ bool Graph::fillEL(){
 
 	if(debug){
 		cout <<"\nedgeList \n";
-		for(unsigned int i = 0; i < arcsCount; i++) cout << edgeList[i][0] <<" "<< edgeList[i][1] << endl;
+		for(unsigned int i = 0; i < arcsCount; i++) cout << edgeList[i][0] + 1 <<" "<< edgeList[i][1] + 1<< endl;
 	}
 	return true;
 }
