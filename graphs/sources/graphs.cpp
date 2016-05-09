@@ -66,7 +66,6 @@ void Graph::fillAM(){
 
 bool Graph::fillEL(){
 	if(adjacencyMatrix.empty()) return false;
-	cout << arcsCount;
 	edgeList.resize(arcsCount, vector<unsigned int>(2, 0));
 	int arc = 0;
 	for(unsigned int i = 0; i < nodesCount; i++){
@@ -185,4 +184,111 @@ bool Graph::fillGM(){
 		}
 	}	
 	return true;
+}
+
+void Graph::AM_DFS(int v){
+	visited.clear();
+	visited.resize(nodesCount, false);
+	AM_DFS2(v);
+}
+
+void Graph::AM_DFS2(int v){
+	visited[v] = true;
+	if(debug)cout << v+1 << "\t";
+
+	for(int i = 0; i < nodesCount; i++)
+		if((adjacencyMatrix[v][i] == 1) && !visited[i]) AM_DFS2(i);
+}
+
+void Graph::ASSCL_DFS(int v){	
+	visited.clear();
+	visited.resize(nodesCount, false);
+	ASSCL_DFS2(v);
+}
+
+void Graph::ASSCL_DFS2(int v){	
+	visited[v] = true;  
+	if(debug)cout << v +1<< "\t"; 
+
+	for(int i = 0; i < adjacencySSList[v].size(); i++)
+		if(!visited[adjacencySSList[v][i]-1]) ASSCL_DFS2(adjacencySSList[v][i]-1);
+
+	return;
+}
+
+void Graph::EL_DFS(int v){	
+	visited.clear();
+	visited.resize(nodesCount, false);
+	EL_DFS2(v);
+}
+
+void Graph::EL_DFS2(int v){	
+	visited[v] = true;  
+	if(debug)cout << v + 1 << "\t"; 
+	
+	for(int i = 0; i < edgeList.size(); i++)
+		if(!visited[edgeList[i][1]] && edgeList[i][0] == v) EL_DFS2(edgeList[i][1]);
+}
+
+void Graph::AM_BFS(int v){
+	visited.clear();
+	visited.resize(nodesCount, false);
+	
+	if(debug)cout << v+1 << "\t";
+	visited[v] = true;
+	AM_BFS2(v);
+}
+
+void Graph::AM_BFS2(int v){
+	vector<unsigned int> q;
+	
+	for(int i = 0; i < nodesCount; i++)
+		if((adjacencyMatrix[v][i] == 1) && !visited[i]) { 
+			q.push_back(i);
+			if(debug)cout << i+1 << "\t";
+			visited[i] = true;
+		}
+	for(int i=0; i < q.size(); i++)	AM_BFS2(q[i]);
+}
+
+void Graph::ASSCL_BFS(int v){	
+	visited.clear();
+	visited.resize(nodesCount, false);
+	
+	visited[v] = true;  
+	if(debug)cout << v +1<< "\t"; 
+	ASSCL_BFS2(v);
+}
+
+void Graph::ASSCL_BFS2(int v){	
+	vector<unsigned int> q;
+	
+	for(int i = 0; i<adjacencySSList[v].size(); i++)
+		if(!visited[adjacencySSList[v][i]-1]){ 
+			q.push_back(adjacencySSList[v][i]-1);
+			if(debug)cout << adjacencySSList[v][i] << "\t";
+			visited[adjacencySSList[v][i]-1] = true;
+		}
+	for(int i=0; i < q.size(); i++)	ASSCL_BFS2(q[i]);
+}
+
+void Graph::EL_BFS(int v){	
+	visited.clear();
+	visited.resize(nodesCount, false);
+	
+	visited[v] = true;  
+	if(debug)cout << v +1<< "\t"; 
+	ASSCL_BFS2(v);
+}
+
+void Graph::EL_BFS2(int v){	
+	vector<unsigned int> q;
+	
+	for(int i = 0; i < edgeList.size(); i++)
+		if(!visited[edgeList[i][1]] && edgeList[i][0]==v) { 
+			q.push_back(edgeList[i][1]);
+			if(debug)cout << edgeList[i][1]+1 << "\t";
+			visited[edgeList[i][1]] = true;
+		}
+	for(int i=0; i < q.size(); i++)	ASSCL_BFS2(q[i]);
 }
