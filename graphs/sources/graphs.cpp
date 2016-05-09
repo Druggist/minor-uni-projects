@@ -3,53 +3,40 @@
 Graph::Graph(unsigned int nodesCount){
 	this->nodesCount = nodesCount;
 	this->arcsCount = (nodesCount*(nodesCount - 1)) / 4;
-	this->debug = false;
+	this->debug = true;
 
 	fillAM();
 	fillEL();
 	fillASSCL();
-	fillAACL();
+	/*fillAACL();
 	fillAPL();
-	fillGM();
+	fillGM();*/
 }
 
 void Graph::fillAM(){
 	mt19937 mt(rd());
 	adjacencyMatrix.resize(nodesCount, vector<bool>(nodesCount, false));
-	uniform_int_distribution<int> dist(0, arcsCount * 2 - 1);
-	vector<unsigned int> arcs(arcsCount, 0);
-	for(unsigned int i = 0; i < arcsCount; i++){
-		arcs[i] = dist(mt);
-		if(i > 0){
-			bool isEqual = false;
-			for(long int j = i - 1; j >= 0; j--){
-				if(arcs[i] == arcs[j]){ 
-					i--;
-					isEqual = true;
-					break;
-				} 
-			}
+	uniform_int_distribution<int> dist(0, 1);
 
-			if(!isEqual) for(long int j = i - 1; j >= 0; j--){
-				if(arcs[j + 1] < arcs[j]) {
-					unsigned int temp = arcs[j + 1];
-					arcs[j + 1] = arcs[j];
-					arcs[j] = temp;
-				} else break;
-			}
+
+	unsigned int count = 0;
+	for(unsigned int i = 0; i < nodesCount - 1; i++){
+		for(unsigned int j = i + 1; j < nodesCount; j++){
+			if(count < arcsCount) {
+				adjacencyMatrix[i][j] = dist(mt);
+				if(adjacencyMatrix[i][j]) count++;
+			} else break;
 		}
 	}
 
-	int pos = -1;
-	for(unsigned int i = 0; i < nodesCount; i++){
-		for(unsigned int j = 0; j < nodesCount; j++){
-			if(!arcs.empty()){
-				if(j > i){
-					pos++;
-					if(pos == arcs[0]){
-						adjacencyMatrix[i][j] = true;
-						arcs.erase(arcs.begin());
-					}
+	if(count < arcsCount){
+		unsigned int left = arcsCount - count;
+		for(unsigned int i = 0; i < nodesCount - 1; i++){
+			for(unsigned int j = i + 1; j < nodesCount; j++){
+				if(left == 0) break;
+				if(!adjacencyMatrix[i][j]) {
+					adjacencyMatrix[i][j] = true;
+					left--;
 				}
 			}
 		}
