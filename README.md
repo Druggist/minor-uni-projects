@@ -1,2 +1,2 @@
-#DAC Graphs
-Simple program with implementation and sorting of DAC graphs 
+#DAG Graphs
+Simple program with implementation and sorting of DAG graphs 
