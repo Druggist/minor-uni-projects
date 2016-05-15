@@ -1,2 +1,3 @@
-#DAG Graphs
-Simple program with implementation and sorting of DAG graphs 
+#DAG
+Simple program measuring creation and sort times of various directed asynchronus graph implementations.
+
