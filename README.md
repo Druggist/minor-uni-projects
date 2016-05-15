@@ -1,6 +1,6 @@
-# Minor uni projects
+#Minor uni projects
 
-## BST, Degenerated BST & AVL
+##BST, Degenerated BST & AVL
 Simple program measuring tasks on binary search trees such as:
 - Tree creation 
 - Searching
@@ -8,8 +8,11 @@ Simple program measuring tasks on binary search trees such as:
 - Node insertion
 - Node deletion
 
-##DAC Graphs
-Simple program with implementation and sorting of DAC graphs 
+##DAG
+Simple program measuring creation and sort times of various directed asynchronus graphs implementations.  
 
-## First five characters of second last line 
+##First five characters of second last line 
 Simple script for printing first 5 characters of second last line from a given file.
+
+##Prolog exercises
+Collection of small Prolog programs.
