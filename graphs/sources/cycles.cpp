@@ -24,7 +24,8 @@ void Cycles::fill(bool nonHamiltonian){
 	while(firstNode != nextNode){
 		nextNode = dist(mt);
 		if(find(cycle.begin(), cycle.end(), nextNode) != cycle.end() && nextNode != firstNode) nextNode = (firstNode + 1 != nodesCount)?(firstNode + 1):(firstNode - 1);
-		else cycle.push_back(nextNode);
+		else if(firstNode == nextNode && cycle.size() < nodesCount) nextNode = (firstNode + 1 != nodesCount)?(firstNode + 1):(firstNode - 1);
+			else cycle.push_back(nextNode);
 	}
 
 	for (int i = 1; i < cycle.size(); i++){
@@ -54,4 +55,35 @@ void Cycles::fill(bool nonHamiltonian){
 			cout <<endl;
 		}
 	}	
+}
+
+bool Cycles::findHamiltonCycle(int v){
+	result.clear();
+	result.push_back(v);
+	if(hamiltonCycleStep(v)) {
+		if(debug) printResult();
+		return true;
+	}
+	result.clear();
+	return false;	
+}
+
+bool Cycles::hamiltonCycleStep(int v){
+	for(int i = 0; i < adjacencyList[v].size(); i++){
+		if(adjacencyList[v][i] == result[0] && result.size() == nodesCount){
+			result.push_back(adjacencyList[v][i]);
+			return true;
+		}
+		if(find(result.begin() + 1, result.end(), adjacencyList[v][i]) == result.end() && adjacencyList[v][i] != result[0]){
+			result.push_back(adjacencyList[v][i]);
+			if(hamiltonCycleStep(adjacencyList[v][i])) return true;
+			else result.pop_back();
+		} 
+	}
+	return false;
+}
+
+void Cycles::printResult(){
+	for(int i = 0; i < result.size(); i++) cout << result[i] << " ";
+	cout << endl;
 }
