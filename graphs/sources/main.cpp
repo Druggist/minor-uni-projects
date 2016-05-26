@@ -2,6 +2,7 @@
 
 int main(int argc, char *argv[]) {
 clock_t begin, end;
+	if(argc < 2) return 1;
     int n = atoi(argv[1]);
 	int mode =  atoi(argv[2]);
 	

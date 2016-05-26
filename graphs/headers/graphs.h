@@ -10,6 +10,10 @@ class Graph{
 		random_device rd;
 
 		vector <bool> visited; 
+		
+		vector <int> vInC; // number of entering arches for each node
+		vector <int> result;	// sort result
+		
 		vector<vector<bool>> adjacencyMatrix;
 		vector<vector<unsigned int>> edgeList;
 		vector<vector<unsigned int>> adjacencySSList; //subsequent 
@@ -34,8 +38,10 @@ class Graph{
 		void AM_BFS(int v);
 		void ASSCL_BFS(int v);
 		void EL_BFS(int v);
+		
 	public:
 		Graph(unsigned int nodesCount); //filling matrix
-
 		void sort(int mode);
+
+		
 };
