@@ -9,10 +9,10 @@ class Cycles{
 	private:
 		random_device rd;
 		vector<vector<unsigned int>> adjacencyList;
-		vector<int> result;
-		
+		vector<unsigned int> result;
+
 		int nodesCount;
-		int edgesCount;
+		unsigned int edgesCount;
 		bool debug;
 
 		void fill(bool nonHamiltonian);
@@ -20,10 +20,10 @@ class Cycles{
 		void printResult();
 
 		bool hamiltonCycleStep(int v);
+		void eulerCycleStep(int v);
 		
 	public:
 		Cycles(unsigned int nodesCount, float saturation, bool nonHamiltonian = false);
 		bool findHamiltonCycle(int v);
-
-		
+		void findEulerCycle(int v);
 };

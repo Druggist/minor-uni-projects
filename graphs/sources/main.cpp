@@ -18,9 +18,9 @@ clock_t begin, end;
 			cout << n*i << " " << (double(end - begin) / CLOCKS_PER_SEC) << endl;
 		}
 	}else{
-		for(int i=1; i<=1; i++){
+		for(int i=1; i<=10; i++){
 			begin = clock();
-			Cycles obj(n*i, 0.3, mode);
+			Cycles obj(n*i, 0.7, mode);
 			obj.findHamiltonCycle(0);
 			end = clock();
 			

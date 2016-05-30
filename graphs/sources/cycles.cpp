@@ -3,7 +3,7 @@
 Cycles::Cycles(unsigned int nodesCount, float saturation, bool nonHamiltonian){
 	this->nodesCount = nodesCount;
 	this->edgesCount = (nodesCount * (nodesCount - 1) / 2) * saturation;
-	this->debug = true;
+	this->debug = false;
 
 	fill(nonHamiltonian);
 }
@@ -83,7 +83,23 @@ bool Cycles::hamiltonCycleStep(int v){
 	return false;
 }
 
+void Cycles::findEulerCycle(int v){
+	result.clear();
+	eulerCycleStep(v);	
+	if(debug) printResult();
+}
+
+void Cycles::eulerCycleStep(int v){
+	while(adjacencyList[v].size() > 0){
+		int val = adjacencyList[v].back();
+		adjacencyList[v].pop_back();
+		adjacencyList[val].erase(find(adjacencyList[val].begin(), adjacencyList[val].end(), v));
+		eulerCycleStep(val);
+	}
+	result.push_back(v);
+}
+
 void Cycles::printResult(){
-	for(int i = 0; i < result.size(); i++) cout << result[i] << " ";
+	for(unsigned int i = 0; i < result.size(); i++) cout << result[i] << " ";
 	cout << endl;
 }
