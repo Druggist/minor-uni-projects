@@ -8,8 +8,10 @@ Simple program measuring tasks on binary search trees such as:
 - Node insertion
 - Node deletion
 
-##DAG
-Simple program measuring creation and sort times of various directed asynchronus graph implementations.  
+##DAG & Hamilton, Euler algorithms
+- Measuring creation and sort times of various directed asynchronus graph implementations.
+- Measuring times of finding paths and cycles with Hamilton and Euler algorithms. 
+
 
 ##First five characters of second last line 
 Simple script for printing first 5 characters of second last line from a given file.
