@@ -167,6 +167,76 @@ doposort(X, [H|T], [H|OUT]) :-
 	H < X,
 	doposort(X,T,OUT).
 
+insertsort([],[]).
+insertsort([H|T],Lsorted):-
+	insertsort(T,Lwy),
+	doposort(H,Lwy,Lsorted).
+
+zamien([X],[X]).
+zamien([H1,H2|T],[H1|Lnew]):-
+	H1=<H2,
+	zamien([H2|T],Lnew).
+zamien([H1,H2|T],[H2,H1|T]):-
+	H1 > H2.
+
+babel(Lwe,Lwy):-
+	zamien(Lwe,Lwy),
+	Lwe = Lwy.
+
+babel(Lwe,Lsorted):-
+	zamien(Lwe,Lwy),
+	Lwe \= Lwy,
+	babel(Lwy,Lsorted).
+
+zamienlen([X],[X]).
+zamienlen([H1,H2|T],[H1|Lnew]):-
+	length(H1,X),
+	length(H2,Y),
+	X=<Y,
+	zamienlen([H2|T],Lnew).
+zamienlen([H1,H2|T],[H2,H1|T]):-
+	length(H1,X),
+	length(H2,Y),
+	X>Y.
+
+sortlen(X,Y):-
+	zamienlen(X,Y),
+	X=Y.
+sortlen(X,Lsorted):-
+	zamienlen(X,Y),
+	X \= Y,
+	sortlen(Y,Lsorted).
+
+setdiff([],_,[]).
+setdiff([H1|T1],S2,W):-
+	member(H1,S2),
+	setdiff(T1,S2,W).
+setdiff([H1|T1],S2,[H1|W]):-
+	not(member(H1,S2)),
+	setdiff(T1,S2,W).
+
+unikalne(S,[],S).
+unikalne(S,[H|T],W):-
+	setdiff(S,H,X),
+	unikalne(X,T,W).
+
+/*
+sortuniq(ListaList,Lsorted)
+Posortowac liste zbiorow po liczbie elementow unikalnych (wzgledem pozostalych zbiorow)
+*/
+
+czynniki(Liczba,Listaczynnikow):-
+	czynniki(Liczba,2,Listaczynnikow).
+czynniki(Liczba,Dzielnik,[Liczba]):-
+	Liczba =:= Dzielnik.
+czynniki(Liczba,Dzielnik,[Dzielnik|Listaczynnikow]):-
+	Liczba mod Dzielnik =:= 0,
+	Liczba1 is Liczba // Dzielnik,
+	czynniki(Liczba1,2,Listaczynnikow).
+czynniki(Liczba,Dzielnik,Listaczynnikow):-
+	Liczba mod Dzielnik =\= 0,
+	Dzielnik1 is Dzielnik+1,
+	czynniki(Liczba,Dzielnik1,Listaczynnikow).
 
 
 
