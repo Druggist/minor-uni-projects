@@ -220,10 +220,32 @@ unikalne(S,[H|T],W):-
 	setdiff(S,H,X),
 	unikalne(X,T,W).
 
-/*
-sortuniq(ListaList,Lsorted)
-Posortowac liste zbiorow po liczbie elementow unikalnych (wzgledem pozostalych zbiorow)
-*/
+zamienuniq([X],_,[X]).
+zamienuniq([H1,H2|T],PreviousList,[H1|Lnew]):-
+	append(PreviousList,T,OUT),
+	unikalne(H1,[H2|OUT],W1),
+	unikalne(H2,[H1|OUT],W2),
+	length(W1,X),
+	length(W2,Y),
+	X=<Y,
+	zamienuniq([H2|T],[H1|PreviousList],Lnew).
+zamienuniq([H1,H2|T],PreviousList,[H2,H1|T]):-
+	append(PreviousList,T,OUT),
+	unikalne(H1,[H2|OUT],W1),
+	unikalne(H2,[H1|OUT],W2),
+	length(W1,X),
+	length(W2,Y),
+	write(H1),
+	X>Y.
+
+sortuniq(X,Y):-
+	zamienuniq(X,[],Y),
+	X=Y.
+sortuniq(X,Lsorted):-
+	zamienuniq(X,[],Y),
+	X \= Y,
+	sortuniq(Y,Lsorted).
+
 
 czynniki(Liczba,Listaczynnikow):-
 	czynniki(Liczba,2,Listaczynnikow).
