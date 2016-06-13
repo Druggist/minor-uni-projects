@@ -61,7 +61,8 @@ void Knapsack::bruteForce(){
     unsigned long int maxValue=0;
     unsigned long int maxWeight=0;
     unsigned long int maxSet=0;
-	
+  
+  //cout << "Temp data:\n";
     for(unsigned long long i=0;i<(2<<elementsCount);i++){
        unsigned long int Value=0;
        unsigned long int Weight=0;
@@ -70,6 +71,7 @@ void Knapsack::bruteForce(){
              Value+=elementsArray[j].value;
              Weight+=elementsArray[j].weight;
           }
+      if(Weight > knapsackWeight) break;
        }
        
        if(Weight<=knapsackWeight && Value>maxValue){
@@ -77,8 +79,10 @@ void Knapsack::bruteForce(){
           maxWeight=Weight;
           maxSet=i;
        }
+     //cout << "\rSet: " << i << " Value: " << Value << " Weight" << Weight;
     }
-   if(debug) cout << "Maximum set: " << maxSet << "\nValue:" << maxValue << "\tWeight:" << maxWeight << endl;
+    //cout << "\nFinal result:\n";
+    if(debug) cout << "Maximum set: " << maxSet << "\nValue:" << maxValue << "\tWeight:" << maxWeight << endl;
 }
 
 unsigned long int  Knapsack::max(unsigned long int a, unsigned long int b) { 
