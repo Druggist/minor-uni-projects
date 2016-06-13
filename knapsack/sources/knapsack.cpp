@@ -50,7 +50,7 @@ void Knapsack::bruteForce(){
              Value+=elementsArray[j].value;
              Weight+=elementsArray[j].weight;
           }
-		  if(Weight>C) break;
+		  if(Weight>knapsackWeight) break;
        }
        
        if(Weight<=knapsackWeight && Value>maxValue){
