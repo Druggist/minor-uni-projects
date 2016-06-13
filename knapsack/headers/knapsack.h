@@ -17,8 +17,11 @@ class Knapsack{
 		bool debug;
 
 		void printData();
-
+		
+		int binaryBit(unsigned long long i, unsigned long int b);
 	public:
 		Knapsack(unsigned long int weight, unsigned int elements);	
 		~Knapsack();
+		void bruteForce();
+
 };
