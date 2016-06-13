@@ -1,5 +1,7 @@
 #include <iostream>
 #include <random>
+#include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -17,11 +19,16 @@ class Knapsack{
 		bool debug;
 
 		void printData();
-		
+		unsigned long int  max(unsigned long int a, unsigned long int b);
+
 		int binaryBit(unsigned long long i, unsigned long int b);
+		unsigned long int  binaryAlgorithm(unsigned long int capacity, unsigned int elements);
+
 	public:
 		Knapsack(unsigned long int weight, unsigned int elements);	
-		~Knapsack();
+		Knapsack(string fileName);	
 		void bruteForce();
+		void binaryAlgorithm();
+		~Knapsack();
 
 };
