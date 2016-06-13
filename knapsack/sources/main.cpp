@@ -7,5 +7,6 @@ int main(int argc, char const *argv[]){
 	int y = atoi(argv[2]); // elements count
 	Knapsack knapsack(x, y);
 
+	knapsack.bruteForce();
 	return 0;
 }
