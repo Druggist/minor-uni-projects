@@ -31,8 +31,8 @@ Knapsack::Knapsack(string fileName){
 
     for(unsigned int i = 0; i < elementsCount; i++){
       getline(myFile,line);
-      elementsArray[i].weight = stoi(line.substr(0,line.find(" ")));
-      elementsArray[i].value = stoi(line.substr(line.find(" ") + 1, line.length() - 1));
+      elementsArray[i].value = stoi(line.substr(0,line.find(" ")));
+      elementsArray[i].weight = stoi(line.substr(line.find(" ") + 1, line.length() - 1));
     }
     myFile.close();
   }
@@ -79,7 +79,7 @@ void Knapsack::bruteForce(){
           maxWeight=Weight;
           maxSet=i;
        }
-     //cout << "\rSet: " << i << " Value: " << Value << " Weight" << Weight;
+    // cout << "\rSet: " << i << " Value: " << Value << " Weight" << Weight;
     }
     //cout << "\nFinal result:\n";
     if(debug) cout << "Maximum set: " << maxSet << "\nValue:" << maxValue << "\tWeight:" << maxWeight << endl;
