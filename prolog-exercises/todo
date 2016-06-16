@@ -5,3 +5,8 @@
  ✔ Generate arithmetical sequence @done (16-06-15 22:53)
  ✔ Delete from list every third element @done (16-06-15 23:01)
  ✔ Concat two lists @done (16-06-15 23:01) 
+ ☐ Input: [5,6,7,10,14,16,17,19], Formula: X = (Max - Min) / (MaxPos - MinPos), count formula for every number if the result is smaller than the first result (5,19) than add this number to the ResultList. Count average from the ResultList (SortKey).
+ ☐ Every letter in the list has one duplicate. Measure length from each letter to their duplicates and make average of that lengths (sort key). Length a in [a, a] is 1, in [a, b, a,...] is 2 etc. Average for [a, b, b, a] is (3 + 1) / 2 = 2 and for [a, a, b, b, c, c] equals (1+1+1)/3 = 1. Result after sort: [[a, a, b, b, c, c], [a, b, b, a]].
+ ☐ Bin <-> Dec
+ ☐ Hex <-> Dec
+ ☐ Hex <-> Bin
