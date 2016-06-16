@@ -12,7 +12,7 @@
  ✔ Unique elements in list @done (16-06-16 16:57)
  ✔ Delete every occurence in list @done (16-06-16 17:39)
  ✔ Search for max element, center it in the list (delete elements from left and right), make average from the new list (SortKey) @done (16-06-16 19:36)
- ☐ Search for min and max, extract list between them and make average from that list (SortKey)
- ☐ For each number convert to HEX, delete "A-F", the rest is the SortKey
- ☐ For each number convert to BIN, delete repetitions ex. 110111 -> 101, convert back to DEC (SortKey)
- ☐ For each number get unique (in whole set?) prime factor of that number (SortKey)
+ ✔ Search for min and max, extract list between them and make average from that list (SortKey) @done (16-06-16 20:00)
+ ✔ For each number convert to HEX, delete "A-F", the rest is the SortKey @done (16-06-16 21:12)
+ ✔ For each number convert to BIN, delete repetitions ex. 110111 -> 101, convert back to DEC (SortKey) @done (16-06-16 20:52)
+ ✔ For each number get unique (in whole set?) prime factor of that number (SortKey) @done (16-06-16 21:37)
