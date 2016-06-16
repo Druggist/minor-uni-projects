@@ -6,8 +6,13 @@
  ✔ Delete from list every third element @done (16-06-15 23:01)
  ✔ Concat two lists @done (16-06-15 23:01) 
  ✔ Input: [5,6,7,10,14,16,17,19], Formula: X = (Max - Min) / (MaxPos - MinPos), count formula for every number if the result is smaller than the first result (5,19) than add this number to the ResultList. Count average from the ResultList (SortKey). @done (16-06-16 16:23)
- ☐ Every letter in the list has one duplicate. Measure length from each letter to their duplicates and make average of that lengths (sort key). Length a in [a, a] is 1, in [a, b, a,...] is 2 etc. Average for [a, b, b, a] is (3 + 1) / 2 = 2 and for [a, a, b, b, c, c] equals (1+1+1)/3 = 1. Result after sort: [[a, a, b, b, c, c], [a, b, b, a]].
+ ✔ Every letter in the list has one duplicate. Measure length from each letter to their duplicates and make average of that lengths (sort key). Length a in [a, a] is 1, in [a, b, a,...] is 2 etc. Average for [a, b, b, a] is (3 + 1) / 2 = 2 and for [a, a, b, b, c, c] equals (1+1+1)/3 = 1. Result after sort: [[a, a, b, b, c, c], [a, b, b, a]]. @done (16-06-16 18:28)
  ✔ Bin <-> Dec @done (16-06-16 16:51)
  ✔ Hex <-> Dec @done (16-06-16 17:39)
  ✔ Unique elements in list @done (16-06-16 16:57)
  ✔ Delete every occurence in list @done (16-06-16 17:39)
+ ✔ Search for max element, center it in the list (delete elements from left and right), make average from the new list (SortKey) @done (16-06-16 19:36)
+ ☐ Search for min and max, extract list between them and make average from that list (SortKey)
+ ☐ For each number convert to HEX, delete "A-F", the rest is the SortKey
+ ☐ For each number convert to BIN, delete repetitions ex. 110111 -> 101, convert back to DEC (SortKey)
+ ☐ For each number get unique (in whole set?) prime factor of that number (SortKey)
