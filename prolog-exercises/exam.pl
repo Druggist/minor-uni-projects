@@ -154,4 +154,68 @@ sortuj(Lwe,Lwy):-
 	zamien(Lwe,Lwy1),
 	Lwe \= Lwy1,
 	sortuj(Lwy1,Lwy).
+/*
+Usuwanie wszystkich takich samych elementów i elementy unikalne
+*/
+usuntesame(_,[],[]).
+usuntesame(El,[H|T],Wy):-
+	El =:= H,
+	usuntesame(El,T,Wy), !.
+usuntesame(El,[H|T],[H|Wy]):-
+	usuntesame(El,T,Wy).
 
+unikalne([],[]).
+unikalne([H|T],[H|Wy]):-
+	not(member(H,T)),
+	unikalne(T,Wy), !.
+unikalne([H|T],Wy):-
+	usuntesame(H,T,X),
+	unikalne(X,Wy).
+
+/*
+Konwersja Bin <=> Dec
+*/
+dec2bin(0,0).
+dec2bin(Dec,Bin):-
+	Bit is Dec mod 2,
+	Rest is Dec // 2,
+	dec2bin(Rest,Bin1),
+	Bin is Bin1 * 10 + Bit.
+
+bin2dec(0,0).
+bin2dec(Bin,Dec):-
+	Bit is Bin mod 10,
+	Rest is Bin // 10,
+	bin2dec(Rest,Dec1),
+	Dec is Dec1 * 2 + Bit.
+
+/*
+Konwersja Hex <=> Dec
+*/
+
+hexalphabet(10,a):- !.
+hexalphabet(11,b):- !.
+hexalphabet(12,c):- !.
+hexalphabet(13,d):- !.
+hexalphabet(14,e):- !.
+hexalphabet(15,f):- !.
+hexalphabet(Y,X):-
+	atom_number(X,Y).
+
+dec2hex(0,'').
+dec2hex(Dec,Hex):-
+	Bit1 is Dec mod 16,
+	hexalphabet(Bit1,Bit),
+	Rest is Dec // 16,
+	dec2hex(Rest,Hex1),
+	atom_concat(Hex1,Bit,Hex).
+
+hex2dec('',0).
+hex2dec(Hex,Dec):-
+	sub_atom(Hex,_,1,0,Bit1),
+	atom_length(Hex,L1),
+	L is L1 - 1,
+	sub_atom(Hex,_,L,1,Rest),
+	hexalphabet(Bit,Bit1),
+	hex2dec(Rest,Dec1),
+	Dec is Dec1 * 16 + Bit.
