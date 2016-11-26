@@ -1,2 +1,2 @@
-#Prolog exercises
-Collection of small Prolog programs.
+#Python exercises
+Collection of checkIO exercises in Python.
