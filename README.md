@@ -1,2 +1,2 @@
 #Python exercises
-Collection of checkIO exercises in Python.
+Collection of checkIO exercises and Lumberjack challenge in Python.
