@@ -27,4 +27,8 @@
 *.out
 *.app
 
+# PDDL 
+sas_plan
+.sas
+
 *.txt
