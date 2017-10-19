@@ -29,6 +29,6 @@
 
 # PDDL 
 sas_plan
-.sas
+*.sas
 
 *.txt
