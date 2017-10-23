@@ -1,0 +1,3 @@
+#/usr/bin/env ipython
+
+print(!find ./ -size +4k -size -10k -printf '%s\t%f\n')
