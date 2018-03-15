@@ -23,4 +23,13 @@ def markov(n, length, dir):
 			pos = pos + 1 % (len(text) - n)
 	return generated
 
-markov(5, 200, "data/norm_wiki_sample.txt")
+
+words = markov(1, 2000, "data/norm_wiki_sample.txt").split(" ")
+print(sum([len(w) for w in words])/len(words))
+print("\n\n")
+words = markov(3, 2000, "data/norm_wiki_sample.txt").split(" ")
+print(sum([len(w) for w in words])/len(words))
+print("\n\n")
+words = markov(5, 2000, "data/norm_wiki_sample.txt").split(" ")
+print(sum([len(w) for w in words])/len(words))
+print("\n\n")
