@@ -47,14 +47,17 @@ def buildChain(dir,  n, chain = {}):
 		index += 1
 	return chain
 
-def generateText(chain, n, length):
-	word1 = np.random.choice(list(chain.keys()))
+def generateText(path, n, length, word = ""):
+	chain = buildChain(path, n)
+	word1 = np.random.choice(list(chain.keys())) if word == "" else word
 	generated = word1.capitalize()
 
 	while len(generated) < length:
 		word2 = np.random.choice(chain[word1])
-		word1 = " ".join(word1.split(" ")[-(n - 1):]) + " " + word2
+		word1 = " ".join(word1.split(" ")[-(n - 1):]) + " " + word2 if n > 1 else word2
 		generated += ' ' + word2
 	return generated
 
-print(generateText(buildChain("data/norm_wiki_sample.txt", 2), 2, 1000))
+print(generateText("data/norm_wiki_sample.txt", 1, 1000, "probability"))
+print("\n----------------\n")
+print(generateText("data/norm_wiki_sample.txt", 2, 1000, "probability"))
