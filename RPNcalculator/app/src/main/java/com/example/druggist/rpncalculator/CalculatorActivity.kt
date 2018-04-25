@@ -1,5 +1,6 @@
 package com.example.druggist.rpncalculator
 
+import android.app.Activity
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -13,14 +14,39 @@ import kotlin.math.sqrt
 import kotlin.math.log
 
 class CalculatorActivity : AppCompatActivity() {
-    private var segments = mutableListOf<String>("")
+    val REQUEST_CODE = 1000
+    private var segments = mutableListOf("")
+    private var darkTheme = true
+    private var precision = -1
+    private var newLine = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        if (savedInstanceState != null) {
+            with(savedInstanceState) {
+                precision = getInt("Precision")
+                darkTheme = getBoolean("DarkTheme")
+                segments = getStringArrayList("Stack").toMutableList()
+            }
+        }
+
+        setTheme(if(darkTheme) android.R.style.ThemeOverlay_Material_Dark else android.R.style.ThemeOverlay_Material_Light)
+
         setContentView(R.layout.activity_calculator)
         setSupportActionBar(findViewById(R.id.action_bar))
         printVal()
+        super.onCreate(savedInstanceState)
     }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        outState?.run {
+            putInt("Precision", precision)
+            putBoolean("DarkTheme", darkTheme)
+            putStringArrayList("Stack", ArrayList(segments))
+        }
+        super.onSaveInstanceState(outState)
+    }
+
+    fun Double.format(digits: Int) = java.lang.String.format("%.${digits}f", this)
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.action_bar, menu)
@@ -29,8 +55,10 @@ class CalculatorActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_settings -> {
-            val intent = Intent(this, SettingsActivity::class.java).apply {  }
-            startActivity(intent)
+            val i = Intent(this, PreferencesActivity::class.java)
+            i.putExtra("DarkTheme", darkTheme)
+            i.putExtra("Precision", precision)
+            startActivityForResult(i, REQUEST_CODE)
             true
         }
         else -> {
@@ -38,18 +66,39 @@ class CalculatorActivity : AppCompatActivity() {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if((requestCode == REQUEST_CODE) && (resultCode == Activity.RESULT_OK)) {
+            if(data != null) {
+                if(data.hasExtra("DarkTheme")) darkTheme = data.getBooleanExtra("DarkTheme", false)
+                if(data.hasExtra("Precision")) precision = data.getIntExtra("Precision", -1)
+            }
+            recreate()
+        }
+    }
+
     private fun printVal() {
         segment1.text = segments[0]
         if(segments.size > 3) {
+        if(precision > -1) {
+            segment2.text = segments[1].toDouble().format(precision)
+            segment3.text = segments[2].toDouble().format(precision)
+            segment4.text = segments[3].toDouble().format(precision)
+        } else {
             segment2.text = segments[1]
             segment3.text = segments[2]
             segment4.text = segments[3]
+        }
         } else if (segments.size > 2) {
-            segment2.text = segments[1]
-            segment3.text = segments[2]
+            if(precision > -1) {
+                segment2.text = segments[1].toDouble().format(precision)
+                segment3.text = segments[2].toDouble().format(precision)
+            } else {
+                segment2.text = segments[1]
+                segment3.text = segments[2]
+            }
             segment4.text = ""
         } else if (segments.size > 1) {
-            segment2.text = segments[1]
+            segment2.text = if(precision <= -1) segments[1] else segments[1].toDouble().format(precision)
             segment3.text = ""
             segment4.text = ""
         } else {
@@ -59,7 +108,28 @@ class CalculatorActivity : AppCompatActivity() {
         }
     }
 
+    fun setEdit(setEdit: Boolean) {
+        if(!setEdit) {
+            label1.text = "1:"
+            label2.text = "2:"
+            label3.text = "3:"
+            label4.text = "4:"
+        } else {
+            label1.text = "=>"
+            label2.text = "1:"
+            label3.text = "2:"
+            label4.text = "3:"
+        }
+    }
+
     fun appendChar(view: View) {
+        setEdit(true)
+        if(!segments[0].isEmpty() && newLine) {
+            if(segments[0].endsWith(".0")) segments[0] = segments[0].substringBefore(".0")
+            if(segments[0].endsWith(".")) segments[0] = segments[0].substringBefore(".")
+            segments.add(0, "")
+            newLine = false
+        }
         val b = view as Button
         var str = b.text
         if (str == ".") {
@@ -73,9 +143,8 @@ class CalculatorActivity : AppCompatActivity() {
 
     fun enterAction(view: View) {
         if(segments[0].isNotBlank()) {
-            if(segments[0].endsWith(".0")) segments[0] = segments[0].substringBefore(".0")
-            if(segments[0].endsWith(".")) segments[0] = segments[0].substringBefore(".")
-            segments.add(0, "")
+            newLine = true
+            setEdit(false)
         }
         printVal()
     }
@@ -91,8 +160,14 @@ class CalculatorActivity : AppCompatActivity() {
     }
 
     fun dropAction(view: View) {
-        if(segments.size > 1) segments.removeAt(0)
-        else segments[0] = ""
+        if(segments.size > 1) {
+            segments.removeAt(0)
+            newLine = true
+        } else {
+            segments[0] = ""
+            newLine = false
+        }
+        setEdit(false)
         printVal()
     }
 
@@ -100,6 +175,7 @@ class CalculatorActivity : AppCompatActivity() {
         segments.clear()
         segments.add("")
         printVal()
+        setEdit(false)
     }
 
     fun addCalc(view: View) {
