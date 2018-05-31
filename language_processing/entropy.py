@@ -1,33 +1,74 @@
-import re
-import sys
-from math import log
+import numpy as np
+from matplotlib import pyplot as plt
+from os import listdir
 
-# Function to compute the base-2 logarithm of a floating point number.
-def log2(number):
-    return log(number) / log(2)
+# sample 1, 3 are correct languages
 
-# Function to normalise the text.
-cleaner = re.compile('[^a-z]+')
-def clean(text):
-    return cleaner.sub(' ',text)
+def get_prob_dict(data, n=1, separator=''):
+	entries = len(data) - n + 1
+	occurs = {}
+	for i in range(entries):
+		key = separator.join(data[i:i + n])
+		if key not in occurs:
+			occurs[key] = 0
+		occurs[key] += 1
+	probs = {}
+	for k, v in occurs.items():
+		probs[k] = v / entries
+	return probs
 
-# Dictionary for letter counts
-letter_frequency = {}
-file = open("data/norm_wiki_en.txt")
-text = file.read()
 
-# Count letter frequencies
-for letter in text:
-    if letter in letter_frequency:
-        letter_frequency[letter] += 1
-    else:
-        letter_frequency[letter] = 1
+def get_char_entropy(data, n):
+	chars = list(data)
+	probs1 = get_prob_dict(chars, n + 1)
+	probs0 = get_prob_dict(chars, n)
+	ent = 0
+	for k, v in probs1.items():
+		key = k[:len(k) - 1]
+		d = probs0[key]
+		ent += v * np.log2(d / v)
+	return ent
 
-# Calculate entropy
-length_sum = 0.0
-for letter in letter_frequency:
-    probability = float(letter_frequency[letter]) / len(text)
-    length_sum += probability * log2(probability)
 
-# Output
-sys.stdout.write('Entropy: %f bits per character\n' % (-length_sum))
+def get_word_entropy(data, n):
+	words = data.split()
+	probs1 = get_prob_dict(words, n + 1, separator=' ')
+	probs0 = get_prob_dict(words, n, separator=' ')
+	ent = 0
+	for k, v in probs1.items():
+		chain = k.split()
+		key = ' '.join(chain[:len(chain) - 1])
+		d = probs0[key]
+		ent += v * np.log2(d / v)
+	return ent
+
+
+files = listdir("data/entropy")
+fig, axarr = plt.subplots(2, 2, sharey='row')
+for f in files:
+	print("Processing file " + f)
+	file = open("data/entropy/" + f)
+	data = file.read()
+	word_entarr = []
+	char_entarr = []
+	for i in range(0, 4):
+		word_entarr.append(get_word_entropy(data, i))
+		char_entarr.append(get_char_entropy(data, i))
+		print("*" + str(i) + ": word=" + str(word_entarr[-1]) + " char=" + str(char_entarr[-1]))
+
+	if f.startswith("norm"):
+		axarr[0, 0].plot(range(0, 4), word_entarr, label=f)
+		axarr[1, 0].plot(range(0, 4), char_entarr, label=f)
+	else:
+		axarr[0, 1].plot(range(0, 4), word_entarr, label=f)
+		axarr[1, 1].plot(range(0, 4), char_entarr, label=f)
+
+axarr[0, 0].set_title("norm word entropy")
+axarr[0, 0].legend()
+axarr[0, 1].set_title("sample word entropy")
+axarr[0, 1].legend()
+axarr[1, 0].set_title("norm char entropy")
+axarr[1, 0].legend()
+axarr[1, 1].set_title("sample char entropy")
+axarr[1, 1].legend()
+plt.show()
