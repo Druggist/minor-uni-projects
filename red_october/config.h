@@ -6,14 +6,28 @@
 #define CANALS_CAPACITY_MAX 5
 
 #define ROOT 0
+#define OK_TAG 11
+#define MSG_TAG 22
 
-typedef struct Queues {
-  int shipId;
-  int timestamp;
-} Queue;
+#define REQ_MSG 100
+#define REL_MSG 200
+#define OK_MSG 300
+
+typedef struct Ships {
+	int shipId;
+	int timestamp;
+} Ship;
 
 typedef struct Canals {
-  std::vector<Queue> queue;
-  int capacity;
-  int direction;
+	std::vector<Ship> queue;
+	int capacity;
+	int direction;
 } Canal;
+
+typedef struct Message {
+	int shipId;
+	int canalId;
+	int direction;
+	int timestamp;
+	int type;
+} Msg;
