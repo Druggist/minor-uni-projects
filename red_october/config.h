@@ -31,3 +31,14 @@ typedef struct Message {
 	int timestamp;
 	int type;
 } Msg;
+
+typedef struct threadParams{
+  pthread_mutex_t *mutexCanals;
+  pthread_cond_t *changeCondition;
+  int tid;
+  int shipsCount;
+  int *clock;
+  Canal *canals;
+  bool* isRunning;
+  bool* allQueued;
+} ThreadParams;
