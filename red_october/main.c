@@ -14,16 +14,22 @@ MPI_Datatype MPI_MESSAGE;
 
 void init(int tid, Canal *canals);
 bool isShipInQueue(std::vector<Ship> queue, int shipId);
+int getQueuePosition(std::vector<Ship> queue, int shipId);
 int getBestCanal(Canal *canals, int shipId, int direction);
 void addShipToQueue(Canal *canals, int shipId, int canalId, int direction, int timestamp);
 void removeShipFromQueue(Canal *canals, int shipId, int canalId);
+void useCanal(Canal *canals, int canal, int tid, int shipsCount, std::vector<int> queued, 
+	pthread_mutex_t *mutexCanals, int *clock, int desiredDirection);
 
 void sendMsg(int dest, int tag, int shipId, int type, int timestamp, int canalId, int direction);
 Msg receiveMsg(int tag);
 void createCustomMessageType();
+
 ThreadParams* createThreadParams(int tid, int shipsCount, int *clock, Canal *canals, bool *isRunning, bool *allQueued,
 	pthread_mutex_t *mutexCanals, pthread_cond_t *changeCondition);
 void* listenerThread(void *thread);
+void mainThread(int tid, int shipsCount, int *clock, Canal *canals, bool *isRunning, bool *allQueued,
+	pthread_mutex_t *mutexCanals, pthread_cond_t *changeCondition);
 
 int main(int argc,char **argv) {
 	int tid, shipsCount, providedThreads;
@@ -102,6 +108,13 @@ bool isShipInQueue(std::vector<Ship> queue, int shipId) {
 	return false;
 }
 
+int getQueuePosition(std::vector<Ship> queue, int shipId) {
+	for(int i = 0; i < queue.size(); i++){
+		if(queue[i].shipId == shipId) return i;
+	}
+	return -1;
+}
+
 int getBestCanal(Canal *canals, int shipId, int direction) {
 	int emptyCanal = -1;
 	int fullCanal = -1;
@@ -143,6 +156,37 @@ void removeShipFromQueue(Canal *canals, int shipId, int canalId) {
 			canals[canalId].queue.erase(canals[canalId].queue.begin() + i);
 			if(canals[canalId].queue.size() <= 0) canals[canalId].direction = 0;
 			return;
+		}
+	}
+}
+
+void useCanal(Canal *canals, int canal, int tid, int shipsCount, std::vector<int> queued, 
+	pthread_mutex_t *mutexCanals, int *clock, int desiredDirection) {
+	pthread_mutex_lock(mutexCanals);
+	*clock += 1;
+	pthread_mutex_unlock(mutexCanals);
+	for(int i = 0; i < queued.size(); i++) {
+		if(queued[i] != canal) {
+				pthread_mutex_lock(mutexCanals);
+				removeShipFromQueue(canals, tid, queued[i]);
+				pthread_mutex_unlock(mutexCanals);
+			for(int j = 0; i < shipsCount; j++) {
+				if(j != tid) {
+					sendMsg(j, MSG_TAG, tid, REL_MSG, *clock, queued[i], desiredDirection);
+				}
+			}
+		}						
+	}
+	
+	sleep(rand() % (CANALS_TIME_MAX - CANALS_TIME_MIN) + CANALS_TIME_MIN);
+	
+	pthread_mutex_lock(mutexCanals);
+	*clock += 1;
+	removeShipFromQueue(canals, tid, canal);
+	pthread_mutex_unlock(mutexCanals);
+	for(int i = 0; i < shipsCount; i++) {
+		if(i != tid) {
+			sendMsg(i, MSG_TAG, tid, REL_MSG, *clock, canal, desiredDirection);
 		}
 	}
 }
@@ -228,4 +272,69 @@ void* listenerThread(void *thread) {
 		}
 	}
 	pthread_exit(NULL);
+}
+
+void mainThread(int tid, int shipsCount, int *clock, Canal *canals, bool *isRunning, bool *allQueued,
+	pthread_mutex_t *mutexCanals, pthread_cond_t *changeCondition) {
+	std::vector<int> queued;
+	int desiredDirection = rand() % 2 + 1;
+	while(*isRunning) {
+		if(queued.size() > 0) {
+			for(int i = 0; i < queued.size(); i++) {
+			    pthread_mutex_lock(mutexCanals);
+				int shipPos = getQueuePosition(canals[queued[i]].queue, tid);
+				pthread_mutex_unlock(mutexCanals);
+				if(shipPos >= 0 && shipPos < canals[queued[i]].capacity) {
+					useCanal(canals, queued[i], tid, shipsCount, queued, mutexCanals, 
+							clock, desiredDirection);
+					queued.clear();
+					desiredDirection = (desiredDirection == 2) ? 1 : 2;
+					break;
+				}
+			}
+		}
+		if(queued.size() < shipsCount) {
+			pthread_mutex_lock(mutexCanals);
+			int canal = getBestCanal(canals, tid, desiredDirection);
+			int currentClock = *clock + 1;
+			pthread_mutex_unlock(mutexCanals);
+			if(canal >= 0) {
+				pthread_mutex_lock(mutexCanals);
+				addShipToQueue(canals, tid, canal, desiredDirection, currentClock);
+				*clock += 1;
+				pthread_mutex_unlock(mutexCanals);
+				queued.push_back(canal);
+				for(int i = 0; i < shipsCount; i++) {
+					if(i != tid) {
+						sendMsg(i, MSG_TAG, tid, REQ_MSG, currentClock, canal, desiredDirection);
+						Msg msg = receiveMsg(OK_TAG);
+						while(msg.timestamp <= currentClock) {
+							sendMsg(i, MSG_TAG, tid, REQ_MSG, currentClock, canal, desiredDirection);
+							msg = receiveMsg(OK_TAG);
+						}
+						pthread_mutex_lock(mutexCanals);
+						if(msg.timestamp + 1 > *clock) *clock = msg.timestamp + 1;
+						pthread_mutex_unlock(mutexCanals);
+					}
+				}
+
+				pthread_mutex_lock(mutexCanals);
+				int shipPos = getQueuePosition(canals[canal].queue, tid);
+				pthread_mutex_unlock(mutexCanals);
+				if(shipPos >= 0 && shipPos < canals[canal].capacity) {
+					useCanal(canals, canal, tid, shipsCount, queued, mutexCanals, 
+							clock, desiredDirection);
+					queued.clear();
+					desiredDirection = (desiredDirection == 2) ? 1 : 2;
+				}
+			}
+		} else {
+			pthread_mutex_lock(mutexCanals);
+			*allQueued = true;
+			while(*allQueued) {
+				pthread_cond_wait(changeCondition, mutexCanals);
+			}
+			pthread_mutex_unlock(mutexCanals);
+		}
+	}
 }
