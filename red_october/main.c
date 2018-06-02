@@ -10,7 +10,7 @@
 #include <vector>
 #include "config.h"
 
-MPI_Datatype MPI_MESSAGE;
+MPI_Datatype MPI_MESSAGE_TYPE;
 
 void init(int tid, Canal *canals);
 bool isShipInQueue(std::vector<Ship> queue, int shipId);
@@ -66,9 +66,9 @@ int main(int argc,char **argv) {
 		MPI_Abort(MPI_COMM_WORLD, 1);
 	}
 
-	/*TODO: RUN MAIN THREAD*/
+	mainThread(tid, shipsCount, clock, canals, isRunning, allQueued, mutexCanals, changeCondition);
 
-	MPI_Type_free(&MPI_MESSAGE);
+	MPI_Type_free(&MPI_MESSAGE_TYPE);
 	MPI_Finalize();
 	pthread_join(*thread, NULL);
 	pthread_attr_destroy(attr);
@@ -162,6 +162,7 @@ void removeShipFromQueue(Canal *canals, int shipId, int canalId) {
 
 void useCanal(Canal *canals, int canal, int tid, int shipsCount, std::vector<int> queued, 
 	pthread_mutex_t *mutexCanals, int *clock, int desiredDirection) {
+   	printf("Ship %d is uing canal %d direction %d timestamp %d\n", tid, canal, desiredDirection, *clock);
 	pthread_mutex_lock(mutexCanals);
 	*clock += 1;
 	pthread_mutex_unlock(mutexCanals);
@@ -177,8 +178,10 @@ void useCanal(Canal *canals, int canal, int tid, int shipsCount, std::vector<int
 			}
 		}						
 	}
-	
-	sleep(rand() % (CANALS_TIME_MAX - CANALS_TIME_MIN) + CANALS_TIME_MIN);
+	int time = rand() % (CANALS_TIME_MAX - CANALS_TIME_MIN) + CANALS_TIME_MIN;
+	sleep(time);
+
+   	printf("Ship %d is leaving canal %d after %ds\n", tid, canal, time);
 	
 	pthread_mutex_lock(mutexCanals);
 	*clock += 1;
@@ -198,14 +201,14 @@ void sendMsg(int dest, int tag, int shipId, int type, int timestamp, int canalId
    msg.timestamp = timestamp;
    msg.canalId = canalId;
    msg.direction = direction;
-   MPI_Send(&msg, 1, MPI_MESSAGE, dest, tag, MPI_COMM_WORLD);
+   MPI_Send(&msg, 1, MPI_MESSAGE_TYPE, dest, tag, MPI_COMM_WORLD);
 }
 
 Msg receiveMsg(int tag){
    Msg msg;
    MPI_Status status;
-   MPI_Recv(&msg, 1, MPI_MESSAGE, MPI_ANY_SOURCE, tag, MPI_COMM_WORLD, &status);
-   printf("RECEIVED: Ship id:%d Type:%d Timestamp:%d Canal id:%d Direction%d\n", 
+   MPI_Recv(&msg, 1, MPI_MESSAGE_TYPE, MPI_ANY_SOURCE, tag, MPI_COMM_WORLD, &status);
+   printf("RECEIVED: Ship id:%d Type:%d Timestamp:%d Canal id:%d Direction:%d\n", 
 				msg.shipId, msg.type, msg.timestamp, msg.canalId, msg.direction);
    return msg;
 }
@@ -220,8 +223,8 @@ void createCustomMessageType(){
    offsets[3] = offsetof(struct Message, timestamp);
    offsets[4] = offsetof(struct Message, type);
 
-   MPI_Type_create_struct(5, blocklengths, offsets, types, &MPI_MESSAGE);
-   MPI_Type_commit(&MPI_MESSAGE);
+   MPI_Type_create_struct(5, blocklengths, offsets, types, &MPI_MESSAGE_TYPE);
+   MPI_Type_commit(&MPI_MESSAGE_TYPE);
 }
 
 ThreadParams* createThreadParams(int tid, int shipsCount, int *clock, Canal *canals, bool *isRunning, bool *allQueued,

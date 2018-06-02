@@ -4,8 +4,8 @@
 #define CANALS_COUNT 5
 #define CANALS_CAPACITY_MIN 1
 #define CANALS_CAPACITY_MAX 5
-#define CANALS_TIME_MIN 500
-#define CANALS_TIME_MAX 1500
+#define CANALS_TIME_MIN 1
+#define CANALS_TIME_MAX 5
 
 #define ROOT 0
 #define OK_TAG 11
