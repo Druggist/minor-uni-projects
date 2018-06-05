@@ -22,7 +22,7 @@ void useCanal(Canal *canals, int canal, int tid, int shipsCount, std::vector<int
 	pthread_mutex_t *mutexCanals, int *clock, int desiredDirection);
 
 void sendMsg(int dest, int tag, int shipId, int type, int timestamp, int canalId, int direction);
-Msg receiveMsg(int tag);
+Msg receiveMsg(int tag, int myId);
 void createCustomMessageType();
 
 ThreadParams* createThreadParams(int tid, int shipsCount, int *clock, Canal *canals, bool *isRunning, bool *allQueued,
@@ -171,7 +171,7 @@ void useCanal(Canal *canals, int canal, int tid, int shipsCount, std::vector<int
 				pthread_mutex_lock(mutexCanals);
 				removeShipFromQueue(canals, tid, queued[i]);
 				pthread_mutex_unlock(mutexCanals);
-			for(int j = 0; i < shipsCount; j++) {
+			for(int j = 0; j < shipsCount; j++) {
 				if(j != tid) {
 					sendMsg(j, MSG_TAG, tid, REL_MSG, *clock, queued[i], desiredDirection);
 				}
@@ -202,14 +202,16 @@ void sendMsg(int dest, int tag, int shipId, int type, int timestamp, int canalId
    msg.canalId = canalId;
    msg.direction = direction;
    MPI_Send(&msg, 1, MPI_MESSAGE_TYPE, dest, tag, MPI_COMM_WORLD);
+   printf("%d SENT: To: %d Type:%d Timestamp:%d Canal id:%d Direction:%d\n", 
+			 msg.shipId, dest, msg.type, msg.timestamp, msg.canalId, msg.direction);
 }
 
-Msg receiveMsg(int tag){
+Msg receiveMsg(int tag, int myId){
    Msg msg;
    MPI_Status status;
    MPI_Recv(&msg, 1, MPI_MESSAGE_TYPE, MPI_ANY_SOURCE, tag, MPI_COMM_WORLD, &status);
-   printf("RECEIVED: Ship id:%d Type:%d Timestamp:%d Canal id:%d Direction:%d\n", 
-				msg.shipId, msg.type, msg.timestamp, msg.canalId, msg.direction);
+   printf("%d RECEIVED: Ship id:%d Type:%d Timestamp:%d Canal id:%d Direction:%d\n", 
+				myId, msg.shipId, msg.type, msg.timestamp, msg.canalId, msg.direction);
    return msg;
 }
 
@@ -254,7 +256,7 @@ void* listenerThread(void *thread) {
 	pthread_cond_t *changeCondition = params->changeCondition;
 
 	while(*isRunning) {
-		Msg msg = receiveMsg(MSG_TAG);
+		Msg msg = receiveMsg(MSG_TAG, tid);
 
 		switch (msg.type) {
 			case REQ_MSG:
@@ -296,7 +298,7 @@ void mainThread(int tid, int shipsCount, int *clock, Canal *canals, bool *isRunn
 				}
 			}
 		}
-		if(queued.size() < shipsCount) {
+		if(queued.size() < CANALS_COUNT) {
 			pthread_mutex_lock(mutexCanals);
 			int canal = getBestCanal(canals, tid, desiredDirection);
 			int currentClock = *clock + 1;
@@ -310,10 +312,10 @@ void mainThread(int tid, int shipsCount, int *clock, Canal *canals, bool *isRunn
 				for(int i = 0; i < shipsCount; i++) {
 					if(i != tid) {
 						sendMsg(i, MSG_TAG, tid, REQ_MSG, currentClock, canal, desiredDirection);
-						Msg msg = receiveMsg(OK_TAG);
+						Msg msg = receiveMsg(OK_TAG, tid);
 						while(msg.timestamp <= currentClock) {
 							sendMsg(i, MSG_TAG, tid, REQ_MSG, currentClock, canal, desiredDirection);
-							msg = receiveMsg(OK_TAG);
+							msg = receiveMsg(OK_TAG, tid);
 						}
 						pthread_mutex_lock(mutexCanals);
 						if(msg.timestamp + 1 > *clock) *clock = msg.timestamp + 1;

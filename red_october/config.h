@@ -1,9 +1,9 @@
 #include <pthread.h>
 #include <vector>
 
-#define CANALS_COUNT 5
+#define CANALS_COUNT 3
 #define CANALS_CAPACITY_MIN 1
-#define CANALS_CAPACITY_MAX 5
+#define CANALS_CAPACITY_MAX 2
 #define CANALS_TIME_MIN 1
 #define CANALS_TIME_MAX 5
 
