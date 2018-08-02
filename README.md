@@ -1,4 +1,4 @@
-# Distributed processing exercises.
+# Distributed processing exercises
 
 Project implementing mutual exclusion algorithm and Lamport's clock. 
 
