@@ -1,5 +1,6 @@
-##Concurrent programming
-Exercises from cp classes. Topics:
+## Concurrent programming exercises. 
+
+Raised subjects:
 - Files
 - Processes
 - Pipes
