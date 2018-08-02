@@ -1,4 +1,4 @@
-## Concurrent programming exercises. 
+# Concurrent programming exercises
 
 Raised subjects:
 - Files
